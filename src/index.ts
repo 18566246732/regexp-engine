@@ -1,10 +1,27 @@
-import { insertExplicitConcatOperator, infixToPostfix } from "./lib/infix-to-postfix";
-import { buildToNFA, isMatchOf } from './lib/automata';
+import chalk from "chalk";
+import { buildToNFA, infixToPostfix, insertExplicitConcatOperator } from "./lib/utils";
 
-export const match = (regex: string, exp: string): boolean => {
-  const strWithConcat = insertExplicitConcatOperator(regex)
-  const strWithPostfix = infixToPostfix(strWithConcat)
-  const nfa = buildToNFA(strWithPostfix)
+const info = (...args: any) => {
+  // console.log(chalk.green(...args), "\n");
+};
 
-  return isMatchOf(exp, nfa)
-}
+export const getNFA = (regex: string): any => {
+  const strWithConcat = insertExplicitConcatOperator(regex);
+  info("1. add connector:", strWithConcat);
+
+  const strWithPostfix = infixToPostfix(strWithConcat);
+  info("2. transform to postfix:", strWithPostfix);
+
+  const nfa = buildToNFA(strWithPostfix);
+  info("3. generate nfa:");
+  // console.dir(nfa);
+  return nfa;
+};
+
+export const getDFA = (regex: string): any => {
+  const nfa = getNFA(regex);
+  info("4. transform to dfa:"); //
+  const dfa = generateDFA(nfa);
+  // console.dir(dfa);
+  return dfa;
+};
